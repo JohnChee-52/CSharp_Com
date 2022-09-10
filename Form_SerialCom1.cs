@@ -11,15 +11,20 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RS485_Port {
-    
+
     public partial class Form_SerialCom1 : Form {
         public static string str_RxData = "fake rxed data";
-        private static bool bF_SerPort_Ready = false;
+        public static bool bF_SerPort_Ready = false;
         //cc-------------------------------------------------------------------------------------------------------------
         public Form_SerialCom1() {
             InitializeComponent();
             populate_PortNames();
+
             str_RxData = "No data yet";
+            SerPort.ReadTimeout = 500; //ms
+            SerPort.WriteTimeout = 500; //ms
+
+
             //Thread SerialPort_Thread = new Thread(new ThreadStart(serialPort1DataReceived));
             //SerialPort_Thread.Start();  // Start secondary thread  
 
@@ -41,33 +46,33 @@ namespace RS485_Port {
                     SerPort.Close();
                 }
 
-                //-- get serial port & open
-                get_selected_SerPort();
-                progressBar_PortAvailable.Value = 0;
+                //-- get serial port from displayed
+                Set_SerPort_to_UsrChoice();
 
-                SerPort.Open();
-                progressBar_PortAvailable.Value = 100;
-                Thread.Sleep(200);
-                textBox_Status.Text = SerPort.PortName + " is now opened.";
-                for (long i = 0; i < 1000000; i++) {
-                    ;
-                }
-                textBox_RxData.Text = "Done";
+                //-- signal to user that port is being set and available
+                progressBar_PortAvailable.Value = 0;
+                SerPort.Open(); //should be successful, since we had checked which com ports are available
                 bF_SerPort_Ready = true;
 
-                //-- setup peripheral functions
+                //-- dramatize the opening of the selected com port
+                progressBar_PortAvailable.Value = 100;
+                textBox_Status.Text = SerPort.PortName + " is now opened.";
+                textBox_RxData.Text = "Waiting to receive data...";
+
+                //-- enable Close button since Port is already opened
                 button_ClosePort.Enabled = true;
-                textBox_RxData.Text += "Ready...";
+
+                Thread.Sleep(500); //Give time for the progress bar to display
                 SerPort_read_n_show();
 
-            } catch {
+            } catch { //if opening a port is not successful, then..
                 textBox_Status.Text = "Invalid Serial Port! Please select Com Port!";
             }
         }
         //--------------------------------------------------------------------------------------------------------------
-        private void get_selected_SerPort() {
-            SerPort.PortName = comboBox_PortSelect.Text;
-            SerPort.BaudRate = Convert.ToInt32(comboBox_BaudRate.Text);
+        private void Set_SerPort_to_UsrChoice() {
+            SerPort.PortName = comboBox_PortSelect.Text; //Set the Serial port to one of recently populated serial port names 
+            SerPort.BaudRate = Convert.ToInt32(comboBox_BaudRate.Text); //Set the baudrate according to that displayed
         }
         //--------------------------------------------------------------------------------------------------------------
         private void button_ClosePort_Click(object sender, EventArgs e) {
@@ -83,28 +88,36 @@ namespace RS485_Port {
             populate_PortNames();
         }
         //--------------------------------------------------------------------------------------------------------------
-        private void SerPort_read_n_show() {
-            if (bF_SerPort_Ready) {
-                str_RxData = SerPort.ReadLine();
-                textBox_RxData.Text += str_RxData + "\r\n";
+        public void SerPort_read_n_show() {
+            while (bF_SerPort_Ready) {
+                try {
+                    str_RxData = SerPort.ReadLine();
+                    textBox_RxData.Text += str_RxData + "\r\n";
+                } catch (TimeoutException) {
+
+                }
             }
         }
         //--------------------------------------------------------------------------------------------------------------
-        public void serialPort1DataRxed(object sender, SerialDataReceivedEventArgs e) {
-            try {
-                str_RxData = SerPort.ReadLine();
+        //public void serialPort1DataRxed(object sender, SerialDataReceivedEventArgs e) {
+        //    try {
+        //        str_RxData = SerPort.ReadLine();
 
 
-                Invoke(new EventHandler(putData));
+        //        Invoke(new EventHandler(putData));
 
-            } catch {
+        //    } catch {
 
-            }
-        }
+        //    }
+        //}
         //--------------------------------------------------------------------------------------------------------------
         private void putData(object sender, EventArgs e) {
-            textBox_RxData.Text += str_RxData;
+            //textBox_RxData.Text += str_RxData;
+        }
+
+        private void comboBox_BaudRate_SelectedIndexChanged(object sender, EventArgs e) {
+
         }
         //--------------------------------------------------------------------------------------------------------------
-     }
+    }
 }

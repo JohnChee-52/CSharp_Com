@@ -53,7 +53,7 @@ namespace RS485_Port {
             this.textBox_RxData.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox_RxData.Size = new System.Drawing.Size(490, 502);
             this.textBox_RxData.TabIndex = 1;
-            this.textBox_RxData.Text = "No data";
+            this.textBox_RxData.Text = "Waiting for Serial port to open...";
             // 
             // groupBox_ReceivedData
             // 
@@ -110,7 +110,7 @@ namespace RS485_Port {
             this.textBox_Status.Name = "textBox_Status";
             this.textBox_Status.Size = new System.Drawing.Size(512, 26);
             this.textBox_Status.TabIndex = 7;
-            this.textBox_Status.Text = "Select a com port; Click Button Refresh to get ports. ";
+            this.textBox_Status.Text = "\r\nRefresh needed if Com Cable just pugged in\r\n";
             // 
             // label_BaudRate
             // 
@@ -161,6 +161,7 @@ namespace RS485_Port {
             this.comboBox_BaudRate.Size = new System.Drawing.Size(112, 28);
             this.comboBox_BaudRate.TabIndex = 1;
             this.comboBox_BaudRate.Text = "115200";
+            this.comboBox_BaudRate.SelectedIndexChanged += new System.EventHandler(this.comboBox_BaudRate_SelectedIndexChanged);
             // 
             // comboBox_PortSelect
             // 
@@ -177,7 +178,7 @@ namespace RS485_Port {
             this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(663, 673);
+            this.tabPage2.Size = new System.Drawing.Size(663, 497);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
