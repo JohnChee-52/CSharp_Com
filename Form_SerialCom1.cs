@@ -13,14 +13,18 @@ using System.Windows.Forms;
 namespace RS485_Port {
 
     public partial class Form_SerialCom1 : Form {
-        public static string str_RxData = "fake rxed data";
+        public static string str_RxChars = "fake rxed data" + "0";
+        public static string str_Delimiter = "S";
         public static bool bF_SerPort_Ready = false;
-        //cc-------------------------------------------------------------------------------------------------------------
+        public static int i_CntClicks = 0;
+        //PT===== Primary Thread =====================================================================================
         public Form_SerialCom1() {
             InitializeComponent();
             populate_PortNames();
 
-            str_RxData = "No data yet";
+
+            str_RxChars = "No data yet";
+            //-- Add serial port timeout (def= none)
             SerPort.ReadTimeout = 500; //ms
             SerPort.WriteTimeout = 500; //ms
 
@@ -28,8 +32,11 @@ namespace RS485_Port {
             //Thread SerialPort_Thread = new Thread(new ThreadStart(serialPort1DataReceived));
             //SerialPort_Thread.Start();  // Start secondary thread  
 
+
+
+
         }
-        //cc------------------------------------------------------------------------------------------------------------
+        //PT============================================================================================================
         //--------------------------------------------------------------------------------------------------------------
         private void populate_PortNames() {
             comboBox_PortSelect.Items.Clear();
@@ -63,7 +70,7 @@ namespace RS485_Port {
                 button_ClosePort.Enabled = true;
 
                 Thread.Sleep(500); //Give time for the progress bar to display
-                SerPort_read_n_show();
+                //SerPort_read_n_show();
 
             } catch { //if opening a port is not successful, then..
                 textBox_Status.Text = "Invalid Serial Port! Please select Com Port!";
@@ -76,11 +83,15 @@ namespace RS485_Port {
         }
         //--------------------------------------------------------------------------------------------------------------
         private void button_ClosePort_Click(object sender, EventArgs e) {
+
+            textBox_Status.Text += "clicked";
+            textBox_Status.Text += i_CntClicks.ToString();
+            i_CntClicks++;
             if (SerPort.IsOpen) {
                 SerPort.Close();
                 progressBar_PortAvailable.Value = 0;
+                textBox_Status.Text = "Serial Com Port has closed.";
                 comboBox_PortSelect.Text = "Select a Com Port";
-                textBox_Status.Text = "Previous Com Port has closed.";
             }
         }
         //--------------------------------------------------------------------------------------------------------------
@@ -88,20 +99,36 @@ namespace RS485_Port {
             populate_PortNames();
         }
         //--------------------------------------------------------------------------------------------------------------
+        private void SerPort_rx_Chars(object sender, SerialDataReceivedEventArgs e) {
+            try {
+                str_RxChars = SerPort.ReadTo(str_Delimiter);
+                Invoke(new EventHandler(showRxChars));
+            } catch {
+
+            }
+            
+        }
+        //--------------------------------------------------------------------------------------------------------------
+        private void showRxChars(object sender, EventArgs e) {
+            textBox_RxData.Text += str_RxChars;
+        }
+        //--------------------------------------------------------------------------------------------------------------
         public void SerPort_read_n_show() {
             while (bF_SerPort_Ready) {
                 try {
-                    str_RxData = SerPort.ReadLine();
-                    textBox_RxData.Text += str_RxData + "\r\n";
-                } catch (TimeoutException) {
+                    str_RxChars = SerPort.ReadLine(); //read and wait till CRLF appears
+                    textBox_RxData.Text += str_RxChars + "\r\n"; //Show data with restored CRLF
+                } catch (TimeoutException) { //CPU will run this when Serial timeout occurs, instead of stuck at ReadLine
 
+                } finally {
+                    textBox_RxData.Text += ".";
                 }
             }
         }
         //--------------------------------------------------------------------------------------------------------------
         //public void serialPort1DataRxed(object sender, SerialDataReceivedEventArgs e) {
         //    try {
-        //        str_RxData = SerPort.ReadLine();
+        //        str_RxChars = SerPort.ReadLine();
 
 
         //        Invoke(new EventHandler(putData));
@@ -112,10 +139,14 @@ namespace RS485_Port {
         //}
         //--------------------------------------------------------------------------------------------------------------
         private void putData(object sender, EventArgs e) {
-            //textBox_RxData.Text += str_RxData;
+            //textBox_RxData.Text += str_RxChars;
         }
 
         private void comboBox_BaudRate_SelectedIndexChanged(object sender, EventArgs e) {
+
+        }
+
+        private void Form_SerialCom1_Load(object sender, EventArgs e) {
 
         }
         //--------------------------------------------------------------------------------------------------------------

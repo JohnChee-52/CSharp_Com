@@ -45,22 +45,26 @@ namespace RS485_Port {
             this.groupBox_SeralComPort.SuspendLayout();
             this.SuspendLayout();
             // 
+            // SerPort
+            // 
+            this.SerPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerPort_rx_Chars);
+            // 
             // textBox_RxData
             // 
-            this.textBox_RxData.Location = new System.Drawing.Point(11, 28);
+            this.textBox_RxData.Location = new System.Drawing.Point(6, 28);
             this.textBox_RxData.Multiline = true;
             this.textBox_RxData.Name = "textBox_RxData";
             this.textBox_RxData.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_RxData.Size = new System.Drawing.Size(490, 502);
+            this.textBox_RxData.Size = new System.Drawing.Size(650, 431);
             this.textBox_RxData.TabIndex = 1;
-            this.textBox_RxData.Text = "Waiting for Serial port to open...";
+            this.textBox_RxData.Text = "Select a serial com port. Waiting... ";
             // 
             // groupBox_ReceivedData
             // 
             this.groupBox_ReceivedData.Controls.Add(this.textBox_RxData);
-            this.groupBox_ReceivedData.Location = new System.Drawing.Point(719, 101);
+            this.groupBox_ReceivedData.Location = new System.Drawing.Point(570, 101);
             this.groupBox_ReceivedData.Name = "groupBox_ReceivedData";
-            this.groupBox_ReceivedData.Size = new System.Drawing.Size(534, 671);
+            this.groupBox_ReceivedData.Size = new System.Drawing.Size(663, 472);
             this.groupBox_ReceivedData.TabIndex = 2;
             this.groupBox_ReceivedData.TabStop = false;
             this.groupBox_ReceivedData.Text = "Received Data";
@@ -72,7 +76,7 @@ namespace RS485_Port {
             this.tabControl1.Location = new System.Drawing.Point(33, 101);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(671, 530);
+            this.tabControl1.Size = new System.Drawing.Size(531, 459);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage_SerialCom
@@ -81,7 +85,7 @@ namespace RS485_Port {
             this.tabPage_SerialCom.Location = new System.Drawing.Point(4, 29);
             this.tabPage_SerialCom.Name = "tabPage_SerialCom";
             this.tabPage_SerialCom.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_SerialCom.Size = new System.Drawing.Size(663, 497);
+            this.tabPage_SerialCom.Size = new System.Drawing.Size(523, 426);
             this.tabPage_SerialCom.TabIndex = 0;
             this.tabPage_SerialCom.Text = "Serial Com";
             this.tabPage_SerialCom.UseVisualStyleBackColor = true;
@@ -99,7 +103,7 @@ namespace RS485_Port {
             this.groupBox_SeralComPort.ForeColor = System.Drawing.SystemColors.ControlText;
             this.groupBox_SeralComPort.Location = new System.Drawing.Point(15, 21);
             this.groupBox_SeralComPort.Name = "groupBox_SeralComPort";
-            this.groupBox_SeralComPort.Size = new System.Drawing.Size(633, 113);
+            this.groupBox_SeralComPort.Size = new System.Drawing.Size(493, 101);
             this.groupBox_SeralComPort.TabIndex = 1;
             this.groupBox_SeralComPort.TabStop = false;
             this.groupBox_SeralComPort.Text = "Seral Com Port";
@@ -108,9 +112,9 @@ namespace RS485_Port {
             // 
             this.textBox_Status.Location = new System.Drawing.Point(6, 69);
             this.textBox_Status.Name = "textBox_Status";
-            this.textBox_Status.Size = new System.Drawing.Size(512, 26);
+            this.textBox_Status.Size = new System.Drawing.Size(475, 26);
             this.textBox_Status.TabIndex = 7;
-            this.textBox_Status.Text = "\r\nRefresh needed if Com Cable just pugged in\r\n";
+            this.textBox_Status.Text = "\r\nRefresh if Com Cable just plugged in\r\n";
             // 
             // label_BaudRate
             // 
@@ -124,7 +128,7 @@ namespace RS485_Port {
             // button_ClosePort
             // 
             this.button_ClosePort.BackColor = System.Drawing.Color.Pink;
-            this.button_ClosePort.Location = new System.Drawing.Point(533, 53);
+            this.button_ClosePort.Location = new System.Drawing.Point(390, 12);
             this.button_ClosePort.Name = "button_ClosePort";
             this.button_ClosePort.Size = new System.Drawing.Size(91, 51);
             this.button_ClosePort.TabIndex = 4;
@@ -178,7 +182,7 @@ namespace RS485_Port {
             this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(663, 497);
+            this.tabPage2.Size = new System.Drawing.Size(523, 426);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -193,7 +197,8 @@ namespace RS485_Port {
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "Form_SerialCom1";
-            this.Text = "Form1";
+            this.Text = "Form_SerialCom1";
+            this.Load += new System.EventHandler(this.Form_SerialCom1_Load);
             this.groupBox_ReceivedData.ResumeLayout(false);
             this.groupBox_ReceivedData.PerformLayout();
             this.tabControl1.ResumeLayout(false);
